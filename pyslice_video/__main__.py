@@ -27,6 +27,14 @@ parse.add_argument(
                     action = 'store',
                     default = 30)
 
+parse.add_argument(
+                    '-ns',
+                    '--slices_number',
+                    help = 'Number of slices.',
+                    type = int,
+                    action = 'store',
+                    default = 0)
+
 args: dict = parse.parse_args().__dict__
 video_path_folder = args['folder_path']
 
@@ -39,6 +47,9 @@ if not os.path.isdir(args['folder_path']):
 
 # Creates a list of all the videos in the folder
 video_names = os.listdir(video_path_folder)
+
+n_slices: int = args['slices_number']
+
 # Iterates over the list of videos
 for video_name in video_names:
     # Verifies if the video is a video file
@@ -60,7 +71,7 @@ for video_name in video_names:
             os.mkdir(video_parts_folder)
 
         # Iterates over the number of slices
-        for i in range(slice_numbers):
+        for i in range(slice_numbers)[0:n_slices]:
             video_trim = video.subclip(slice_start, slice_end)
             video_trim.write_videofile(
                                         f'{video_parts_folder}/{video_name.replace(".", "_")}{[formatNumber(i)]}.mp4',
